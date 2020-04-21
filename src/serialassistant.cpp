@@ -8,11 +8,14 @@
 #include <QKeyEvent>
 #include <QStyleFactory>
 
-bool SerialAssistant::openPort;      // 打开串口
 qint32 SerialAssistant::pgsBarInc;   // 进度条增量
 
 //QTime timerTest; // 可用于测试运行时间
 
+/**
+ * @brief SerialAssistant::SerialAssistant 构造函数
+ * @param parent
+ */
 SerialAssistant::SerialAssistant(QWidget *parent) :
     QWidget(parent),
      ui(new Ui::SerialAssistant)
@@ -20,11 +23,19 @@ SerialAssistant::SerialAssistant(QWidget *parent) :
     ui->setupUi(this);
     QApplication::setStyle(QStyleFactory::create("fusion"));// fusion 风格
     initComboBox_Config();
+
     currentPort = new BaseSerialComm; // 构建一个端口对象
     saveFile = NULL; // 保存文件指针
-//    ui->txtSingle->setPlaceholderText( "硬石电子 携手合作,共创未来" " " "http://www.ing10bbs.com/" );
     connect(currentPort,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(slots_errorHandler(QSerialPort::SerialPortError)) );
     connect(this->ui->txtSingle,SIGNAL(cursorPositionChanged()),this,SLOT(slots_highlightLine())); // 链接高亮显示 信号->槽
+    connect(this, SIGNAL(signals_rxBufIsFull()),this, SLOT(slots_rxBufIsFull()));
+    currentPort->setReadBufferSize(rxBufSize);
+
+//    connect(,SIGNAL(timeout()),this,SLOT(slots_serialRxCallback()));
+    connect(&txtFlashTime,SIGNAL(timeout()),this,SLOT(slots_rxDisplayTxt()));
+    txtFlashTime.start(10);
+
+
 
     connect(&rxTimeout,SIGNAL(timeout()),this,SLOT(slots_rxTimeOut()));
     connect(this, SIGNAL( signals_displayTxBuffer(QByteArray )), this,SLOT(slots_displayTxBuffer(QByteArray)),Qt::QueuedConnection);
@@ -39,7 +50,7 @@ SerialAssistant::SerialAssistant(QWidget *parent) :
     multiPushButton.push_back(ui->btnMultiPush08);
     multiPushButton.push_back(ui->btnMultiPush09);
     multiPushButton.push_back(ui->btnMultiPush10);
-    foreach (QPushButton *MultiPush, multiPushButton) { // 链接点击信号到一个函数
+    foreach (QPushButton *MultiPush, multiPushButton) { // 链接点击信号到同一个函数
         connect(MultiPush,SIGNAL(clicked(bool)),this,SLOT(slots_multiSend()));
     }
 
@@ -67,16 +78,17 @@ SerialAssistant::SerialAssistant(QWidget *parent) :
     multiCheckBox.push_back(ui->chkMulti09);
     multiCheckBox.push_back(ui->chkMulti10);
 
+    /* 监控输入的文本 */
     disconnect(this->ui->txtSingle,SIGNAL(textChanged()),this,SLOT(on_txtSingle_textChanged()));
 
-    currentPort->setReadBufferSize(1);
 
-
+//    currentPort->setReadBufferSize(1);
 //    timerTest.start();
-
     ui->toolBox->setCurrentIndex(0);
 }
-
+/**
+ * @brief SerialAssistant::~SerialAssistant 析构函数
+ */
 SerialAssistant::~SerialAssistant()
 {
     if(currentPort->isOpen()){
@@ -84,12 +96,14 @@ SerialAssistant::~SerialAssistant()
     }
     delete currentPort;
     delete ui;
-
 }
 
-/*
- *  初始化了串口设置当中的下拉列表(ComboBox)
- *
+
+/* ----------------------------------------------------- */
+/* ui响应事件 */
+
+/**
+ * @brief SerialAssistant::initComboBox_Config 初始化下拉列表控件
  */
 void SerialAssistant::initComboBox_Config()
 {
@@ -103,9 +117,9 @@ void SerialAssistant::initComboBox_Config()
     BaseSerialComm::listVerifyStyle(ui->cbbVerifyStyle);
 }
 
-/*
- *  打开并配置串口
- *
+
+/**
+ * @brief SerialAssistant::on_btnOpenPort_clicked 打开并且配置串口
  */
 void SerialAssistant::on_btnOpenPort_clicked()
 {
@@ -114,16 +128,11 @@ void SerialAssistant::on_btnOpenPort_clicked()
     tmp = tmp.split(" ").first();//  Item的 text 由 <COM1 "描述"> 组成,使用空格作为分隔符取第一段就是端口名
 
     // 当前串口处于关闭状态
-    if(false == openPort ){
+    if( !currentPort->isOpen() ){
         currentPort->setPortName( tmp );              // 设置端口号
         if( currentPort->open(QIODevice::ReadWrite)){ // 打开串口
-            openPort = true;
-            currentPort -> setDTRState(false);
-            currentPort -> setRTSState(false);
             /* 配置端口的波特率等参数 */
             configPort();
-            connect(currentPort ,SIGNAL(readyRead()),this,SLOT( slots_serialRxCallback()));// 有数据就直接接收显示
-            this->startRxTimer();// 如果打开了定时器,则使用定时器的超时时间进行接收显示
             ui->btnOpenPort->setText(tr("关闭串口"));
         }else{
             ui->btnOpenPort->setChecked(false);
@@ -133,11 +142,13 @@ void SerialAssistant::on_btnOpenPort_clicked()
         this->deleteRxTimer();
         this->deleteTxTimer();
         currentPort->close();
-        openPort = false ;// 标记已经关闭串口
         ui->btnOpenPort->setText(tr("打开串口"));
     }
 }
-/* 配置端口的波特率\数据位\奇偶校验\停止位 */
+
+/**
+ * @brief SerialAssistant::configPort配置端口的波特率\数据位\奇偶校验\停止位
+ */
 void SerialAssistant::configPort()
 {
     QVariant tmpVariant;
@@ -160,46 +171,65 @@ void SerialAssistant::configPort()
         BaseSerialComm::listStopBit ( ui -> cbbStopBit );
         QMessageBox::information(NULL, tr("不支持的设置"),  tr("该串口设备不支持当前停止位设置,已修改为默认的设置"), 0, 0);
     }
+    currentPort->setDataTerminalReady(false);
+    currentPort->setRequestToSend(false);
+    connect(currentPort ,SIGNAL(readyRead()),this,SLOT( slots_serialRxCallback()));// 接收数据回调
 }
-/* 刷新按钮点击 槽函数 */
+
+
+/**
+ * @brief SerialAssistant::on_btnRefresh_clicked 点击刷新按钮
+ */
 void SerialAssistant::on_btnRefresh_clicked()
 {
-    if(openPort == false){  // 关闭串口才能刷新端口号
+    if(!currentPort->isOpen()){  // 关闭串口才能刷新端口号
         ui -> cbbPortNum ->clear();
         BaseSerialComm::listPortNum ( ui -> cbbPortNum );
     }
 }
 
-/* DTR翻转 槽函数 */
+
+/**
+ * @brief SerialAssistant::on_chkFlowCtrlDTR_toggled DTR翻转
+ * @param checked
+ */
 void SerialAssistant::on_chkFlowCtrlDTR_toggled(bool checked)
 {
     /* 确保已经打开串口才动作 */
-    if(openPort == true){
-        currentPort -> setDTRState(checked);
+    if(currentPort->isOpen()){
+        currentPort->setDataTerminalReady(checked);
     }
 }
-/* RTS翻转 槽函数 */
+
+/**
+ * @brief SerialAssistant::on_chkFlowCtrlRTS_toggled RTS翻转
+ * @param checked
+ */
 void SerialAssistant::on_chkFlowCtrlRTS_toggled(bool checked)
 {
     /* 确保已经打开串口才动作 */
-    if(openPort == true){
-        currentPort -> setRTSState(checked);
+    if(currentPort->isOpen()){
+        currentPort->setRequestToSend(checked);
     }
 }
 
 
-/* 设置光标到尾部 槽函数 */
+/**
+ * @brief SerialAssistant::on_textBrower_textChanged 设置光标到尾部
+ */
 void SerialAssistant::on_textBrower_textChanged()
 {
     ui->textBrower->moveCursor(QTextCursor::End);
 }
 
-/* 发送按钮 槽函数 */
+/**
+ * @brief SerialAssistant::on_btnSend_clicked 发送按钮
+ */
 void SerialAssistant::on_btnSend_clicked()
 {
     QByteArray txBuf;
 //    QString tmpString;
-    if(openPort){
+    if(currentPort->isOpen()){
         bool ok ;
         txBuf = this->stringToSend(ui->txtSingle->toPlainText(),ui->chbTxHex->isChecked(),ok);
         if(false == ok)
@@ -216,8 +246,8 @@ void SerialAssistant::on_btnSend_clicked()
         currentPort->insertTerminator(txBuf, tmpVariant.value < BaseSerialComm::Terminator> ());
         if(ui->cbbVerifyStyle->currentIndex() != 0){
             QByteArray tmp ;
-            tmp = currentPort->insertVerify(txBuf, ui->spbStart->value(),ui->spbEnd->value(),
-                                      ui->cbbVerifyStyle->currentIndex());
+//            tmp = currentPort->insertVerify(txBuf, ui->spbStart->value(),ui->spbEnd->value(),
+//                                      ui->cbbVerifyStyle->currentIndex());
             ui->txtVerify->setPlainText(tmp);
         }
         /* 显示发送字节数 */
@@ -233,53 +263,6 @@ void SerialAssistant::on_btnSend_clicked()
     }
 }
 
-void SerialAssistant::slots_serialRxCallback()
-{
-    QByteArray tmp = currentPort->readAll();
-    rxBuffer.append(tmp);
-    rxTimeout.start(1);
-}
-/* 接收串口数据 槽函数 */
-void SerialAssistant::slots_rxTimeOut()
-{
-    rxTimeout.stop();
-    QByteArray rxBuf;
-    qint32 rxBytes;
-    QString strToDisplay;
-    rxBuf = rxBuffer; // 读取缓存
-    rxBytes = rxBuf.length();
-    if( (0 != rxBytes) &&  !ui->btnPause->isChecked()) // 缓存非空并且没有暂停
-    {
-        // Hex显示
-        if( ui->chkDisplayHex->checkState() ){
-            rxBuf = rxBuf.toHex(' ').toUpper();
-        }
-        // 加时间戳,分包显示
-        if( ui->checkBox_5->checkState() ){
-           rxBuf.insert(0, QTime::currentTime().toString("[hh:mm:ss.zzz Rx] ") );
-           strToDisplay = QString::fromLocal8Bit(rxBuf);
-           if( NULL != saveFile){
-               streamToSave->operator << (strToDisplay) << endl;
-           }else{
-               ui->textBrower->appendPlainText(strToDisplay);
-           }
-           rxBuffer.clear();
-        }else{
-            strToDisplay = QString::fromLocal8Bit(rxBuf);
-            if( NULL != saveFile){
-                streamToSave->operator << (strToDisplay);
-            }else{
-                ui->textBrower->insertPlainText(strToDisplay);
-            }
-        }
-        rxCount += rxBytes;
-        ui->lblrxCnt->setText(QString("%1").arg(rxCount));
-        if( rxCount > 65536) // 60 *1024 k
-        {
-            emit ui->btnClear->clicked();
-        }
-    }
-}
 
 /* 监控文本 槽函数 */
 void SerialAssistant::on_txtSingle_textChanged()
@@ -313,23 +296,6 @@ void SerialAssistant::slots_errorHandler(QSerialPort::SerialPortError error)
     }
 
 }
-/* 启动接收控制定时器 */
-void SerialAssistant::startRxTimer()
-{
-    /* 勾选"加时间戳"和打开串口都会调用这个函数 */
-    /* 只有在两个都有效的情况下才会启动定时器 */
-    if(openPort ){
-        disconnect(currentPort ,SIGNAL(readyRead()),0,0);
-        currentPort->setReadBufferSize(0);
-        connect(currentPort ,SIGNAL(readyRead()),this,SLOT( slots_serialRxTimeCallback()));
-        if(ui->checkBox_5->isChecked()){
-            rxTimer.setTimerType(Qt::PreciseTimer );
-            disconnect(currentPort ,SIGNAL(readyRead()),0,0);
-            connect(&rxTimer,SIGNAL(timeout()),this,SLOT(slots_serialRxCallback()));
-            rxTimer.start(ui->spbRxInterval->value());// n ms扫描一次串口
-        }
-    }
-}
 
 /* 停止接收定时器 */
 void SerialAssistant::deleteRxTimer()
@@ -345,7 +311,11 @@ void SerialAssistant::deleteRxTimer()
     }
 }
 
-/* 发送文本框的光标位置改变 槽函数 光标所在行高亮 */
+
+
+/**
+ * @brief SerialAssistant::slots_highlightLine 发送文本框的光标位置改变 光标所在行高亮
+ */
 void SerialAssistant::slots_highlightLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;//提供一种方式显示选择的文本
@@ -358,11 +328,14 @@ void SerialAssistant::slots_highlightLine()
     ui->txtSingle->setExtraSelections(extraSelections);                  //设置高亮
 }
 
-/* 定时发送点击事件 槽函数 */
+/**
+ * @brief SerialAssistant::on_chbTimedTx_clicked 定时发送点击事件
+ * @param checked
+ */
 void SerialAssistant::on_chbTimedTx_clicked(bool checked)
 {
     if(checked){
-        if(openPort ){
+        if(currentPort->isOpen() ){
             this->startTxTimer();
         }
 
@@ -388,20 +361,12 @@ void SerialAssistant::deleteTxTimer()
     }
 }
 
-/* 加时间戳 槽函数 */
-void SerialAssistant::on_checkBox_5_clicked(bool checked)
-{
-    if(checked){
-        this->startRxTimer();
-    }else {
-        this->deleteRxTimer();
-    }
-}
+
 /* 超时发送 槽函数 */
 void SerialAssistant::slots_timeOutTx()
 {
     qint32 index(0);
-    if(openPort){
+    if(currentPort->isOpen()){
         index = ui->toolBox->currentIndex();
         switch(index ){
         case 0:
@@ -497,12 +462,12 @@ void SerialAssistant::slots_displayTxBuffer(QByteArray txBuffer)
 {
     /* 显示发送数据 */
     // Hex显示
-    if(txBuffer.isEmpty())//TODO:
+    if(txBuffer.isEmpty())
         return;
     if( ui->chkDisplayHex->checkState() ){
         txBuffer = txBuffer.toHex(' ').toUpper();
     }
-    txBuffer.insert(0, QTime::currentTime().toString("[hh:mm:ss.zzz Tx] "));
+    txBuffer.insert(0, QTime::currentTime().toString("[hh:mm:ss.zzz]Tx\n"));
     QString strToDisplay = QString::fromLocal8Bit(txBuffer);
     ui->textBrower->appendPlainText(strToDisplay);
 }
@@ -510,7 +475,7 @@ void SerialAssistant::slots_displayTxBuffer(QByteArray txBuffer)
 void SerialAssistant::slots_multiSend()
 {
     QPushButton *btn = (QPushButton*) sender();
-    if(openPort){
+    if(currentPort->isOpen()){
         QString tmpString = multiTxtLine.value(btn->text().toInt()-1)->text(); // 获取对应的文本
         QByteArray txBuf ;
         bool ok;
@@ -530,8 +495,8 @@ void SerialAssistant::slots_multiSend()
         currentPort->insertTerminator(txBuf, tmpVariant.value < BaseSerialComm::Terminator> ());
         if(ui->cbbVerifyStyle->currentIndex() != 0){
             QByteArray tmp ;
-            tmp = currentPort->insertVerify(txBuf, ui->spbStart->value(),ui->spbEnd->value(),
-                                      ui->cbbVerifyStyle->currentIndex());
+//            tmp = currentPort->insertVerify(txBuf, ui->spbStart->value(),ui->spbEnd->value(),
+//                                      ui->cbbVerifyStyle->currentIndex());
             ui->txtVerify->setPlainText(tmp);
         }
         qint32 txBytes = currentPort->write(txBuf);
@@ -580,26 +545,25 @@ void SerialAssistant::on_btnSaveFile_clicked()
         if( NULL != saveFilePath){
             saveFile = new QFile(saveFilePath);
             saveFile->open(QIODevice::WriteOnly | QIODevice::WriteOnly);
-            streamToSave = new QTextStream(saveFile);
-            QMessageBox::information(NULL, tr("保存到文件"), saveFilePath, 0, 0);
+            txtStreamSave = new QTextStream(saveFile);
             fileInfo = saveFilePath;
             ui->btnSaveFile->setText(fileInfo.fileName());
+            QMessageBox::information(NULL, tr("保存到文件"), saveFilePath, 0, 0);
         }else{
             ui->btnSaveFile->setChecked(false);
         }
     }else if( NULL != saveFile) {
         saveFile->close();
         delete saveFile;
-        delete streamToSave;
+        delete txtStreamSave;
         saveFile = NULL;
-        streamToSave = NULL;
-        ui->btnSaveFile->setText("保存至文件...");
+        txtStreamSave = NULL;
+        ui->btnSaveFile->setText("保存至文件");
     }
 }
 
 void SerialAssistant::on_btnLoadFile_clicked()
 {
-
     QString loadFilePath;
     QFileInfo fileInfo;
     /* 获取文件绝对路径 */
@@ -620,7 +584,6 @@ void SerialAssistant::on_btnLoadFile_clicked()
         }else{
             ui->btnLoadFile->setChecked(false);
         }
-
     }else{
         if(loadFile != NULL){
            loadFile->close();
@@ -639,6 +602,7 @@ void SerialAssistant::slots_timeOutProgressBar()
     qint32  pgsBarValue = ui->progressBar->value();
     pgsBarValue += pgsBarInc;
     ui->progressBar->setValue( pgsBarValue );
+
     if( pgsBarValue > tmp ){
         ui->progressBar->setValue( tmp );
         if(i < 2)
@@ -654,18 +618,15 @@ void SerialAssistant::slots_timeOutProgressBar()
         }
     }
 }
-void SerialAssistant::on_spbRxInterval_editingFinished()
-{
-    if(rxTimer.isActive()){
-        rxTimer.start(ui->spbRxInterval->value());// n ms扫描一次串口
-    }
-}
-
+/**
+ * @brief SerialAssistant::on_btnTxFile_clicked  发送文件
+ * @param checked
+ */
 void SerialAssistant::on_btnTxFile_clicked(bool checked)
 {
     if(checked){
         if(NULL != loadFile){
-            if(!openPort){
+            if(!currentPort->isOpen()){
                 ui->btnTxFile->setChecked(false);
                 return;
             }
@@ -705,7 +666,85 @@ void SerialAssistant::on_btnTxFile_clicked(bool checked)
         currentPort->close();
         currentPort->open(QIODevice::ReadWrite);
     }
+}
 
+/**
+ * @brief SerialAssistant::on_pushButton_clicked 复位接收/发送计数器
+ */
+void SerialAssistant::on_pushButton_clicked()
+{
+    rxCount = 0;
+    txCount = 0;
+    ui->lblrxCnt->setText(QString("%1").arg(rxCount));
+    ui->lbltxCnt->setText(QString("%1").arg(rxCount));
+}
+
+/*-----------------------------------------------------------------------------*/
+/* 接收处理 */
+
+/**
+ * @brief SerialAssistant::slots_serialRxCallback 接收函数处理
+ */
+void SerialAssistant::slots_serialRxCallback()
+{
+    rxFlag = true;
+    rxTimeStamp = QTime::currentTime();
+}
+/**
+ * @brief SerialAssistant::slots_rxBufIsFull 缓存满了,需要清空缓存
+ */
+void SerialAssistant::slots_rxBufIsFull()
+{
+    rxBuffer.clear();
+}
+/**
+ * @brief SerialAssistant::insertTimeStramp 插入时间戳
+ * @param tmp  在tmp前面插入接收时间戳
+ */
+void SerialAssistant::insertTimeStramp(QByteArray &tmp)
+{
+    QString currentTime = rxTimeStamp.toString("[hh:mm:ss.zzz]Rx:\n");
+    tmp.prepend( currentTime.toLocal8Bit() );
+}
+/**
+ * @brief SerialAssistant::slots_rxDisplayTxt 接收显示函数
+ */
+void SerialAssistant::slots_rxDisplayTxt()
+{
+    if(rxFlag){
+        disconnect(currentPort ,SIGNAL(readyRead()),this,SLOT( slots_serialRxCallback()));// 接收数据回调
+
+        QByteArray tmp = currentPort->readAll();
+        /* 读取数据,empty代表没有再接收到数据 */
+        if( tmp.isEmpty() ){
+            //TODO:处理串口接收
+            if(rxBuffer.isEmpty())return;
+            tmp = rxBuffer;
+            if(ui->chkDisplayHex->isChecked()){
+                tmp = tmp.toHex(' ').toUpper();
+            }
+            if(ui->checkBox_5->isChecked()){
+                this->insertTimeStramp( tmp );
+                ui->textBrower->appendPlainText(QString::fromLocal8Bit(tmp));
+            }else{
+                ui->textBrower->insertPlainText(QString::fromLocal8Bit(tmp));
+            }
+            if( txtStreamSave != NULL ){
+                txtStreamSave->operator <<( QString::fromLocal8Bit(tmp) );
+            }
+            rxBuffer.clear();
+            rxFlag = false;// 标记为false,只有在下一次触发readyRead信号的时候才会进入这里
+            connect(currentPort, SIGNAL(readyRead()),this,SLOT( slots_serialRxCallback()));// 接收数据回调
+        }else{
+            rxBuffer.append(tmp);
+            rxCount += tmp.size();
+            if( rxCount > rxBufSize ){
+                rxBuffer.clear();
+                rxCount = 0;
+            }
+        }
+    }
+    ui->lblrxCnt->setText( QString::number(rxCount) );
 }
 /**
  * @brief SerialAssistant::on_btnClear_clicked 清空接收文本框和缓存
@@ -721,22 +760,6 @@ void SerialAssistant::on_btnClear_clicked()
     txCount = 0;
     ui->lblrxCnt->setText(QString("%1").arg(rxCount));
     ui->lbltxCnt->setText(QString("%1").arg(rxCount));
-
 }
-/**
- * @brief SerialAssistant::on_pushButton_clicked 复位接收/发送计数器
- */
-void SerialAssistant::on_pushButton_clicked()
-{
-    rxCount = 0;
-    txCount = 0;
-    ui->lblrxCnt->setText(QString("%1").arg(rxCount));
-    ui->lbltxCnt->setText(QString("%1").arg(rxCount));
-}
-
-void SerialAssistant::slots_serialRxTimeCallback()
-{
-    QByteArray tmp = currentPort->readAll();
-    rxBuffer.append(tmp);
-    slots_rxTimeOut();
-}
+/*-----------------------------------------------------------------------------*/
+/* 发送处理 */

@@ -25,17 +25,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        src/baseserialcomm.cpp \
         src/main.cpp \
         src/serialassistant.cpp \
-        src/crcccitt.c \
-        src/crc32.c
+        src/baseserialcomm.cpp \
+        src/crc.c
 
 
 HEADERS += \
-        inc/baseserialcomm.h \
         inc/serialassistant.h \
+        inc/baseserialcomm.h \
         inc/ui_serialassistant.h \
+        inc/crc.h
 
 FORMS += \
         ui/serialassistant.ui
@@ -61,7 +61,7 @@ CONFIG(debug, debug|release){
 #DESTDIR = ./release
 #LIBS  += -L ../../release -lSerialComm
 }
-QMAKE_CXXFLAGS_RELEASE += -O3       # Release -O3
+#QMAKE_CXXFLAGS_RELEASE += -O3       # Release -O3
 
 
 

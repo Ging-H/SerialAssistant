@@ -25,7 +25,6 @@ public:
     explicit SerialAssistant(QWidget *parent = 0);
     ~SerialAssistant();
 
-    static bool openPort;        // 打开串口
     static bool rxPause ;        // 暂停接收
     static qint32 const pgsBarUpRate = 100;  // 进度条的更新时间间隔
     static qint32 pgsBarInc;     // 用于进度条更新增量
@@ -38,46 +37,54 @@ public:
 
     QFile   *saveFile;
     QFile   *loadFile;
-    QTextStream *streamToSave;
-    QTextStream *streamToend;
+    QTextStream *txtStreamSave = NULL;
     BaseSerialComm *currentPort;   // 端口号
     QByteArray rxBuffer;
-    quint32 rxCount = 0;
+    qint32 rxCount = 0;
     quint32 txCount = 0;
+    QVector < QPushButton *> multiPushButton;
+    QVector < QLineEdit *> multiTxtLine;
+    QVector < QCheckBox *> multiCheckBox;
 
+    QTimer rxTimeout; // 超时接收
+
+    qint32 rxBufSize = 64*1024; // 64k buffer
+    QTimer txtFlashTime;        // ui更新事件
+    bool rxFlag = false ;
+    QTime rxTimeStamp;          // 接收数据时间戳
+    QFile rxFile;
+    uchar *rxFilePtr;
+
+
+    void insertTimeStramp(QByteArray &tmp);
 
     void initComboBox_Config();    // 初始化串口配置的下拉列表(ComboBox)
     void configPort();
     void deleteRxTimer();
-    void startRxTimer();
     void deleteTxTimer();
     void startTxTimer();
 
-//    QString asciiToHexString(QString src);
-
     bool isHexString(QString src);
     QByteArray stringToSend(QString src, bool txInHex, bool &ok );
-//    QByteArray stringToSend(QString src, bool txInHex );
-//    QString hexStringToAscii(QString src);
 
-    QVector < QPushButton *> multiPushButton;
-    QVector < QLineEdit *> multiTxtLine;
-    QVector < QCheckBox *> multiCheckBox;
-QTimer rxTimeout;
 signals:
     void signals_displayTxBuffer(QByteArray);
+
+    void signals_rxBufIsFull();
 
 public slots:
 
     void slots_serialRxCallback();
-    void slots_serialRxTimeCallback();
     void slots_errorHandler(QSerialPort::SerialPortError error);
     void slots_highlightLine();
     void slots_timeOutTx();
     void slots_multiSend();
     void slots_timeOutProgressBar();
     void slots_displayTxBuffer(QByteArray);
-    void slots_rxTimeOut();
+//    void slots_rxTimeOut();
+
+    void slots_rxBufIsFull();
+    void slots_rxDisplayTxt();
 
 private slots:
     void on_btnOpenPort_clicked();
@@ -100,20 +107,15 @@ private slots:
 
     void on_chbTimedTx_clicked(bool checked);
 
-    void on_checkBox_5_clicked(bool checked);
-
     void on_spbTxInterval_editingFinished();
 
     void on_chbTxHex_clicked(bool checked);
-
-    void on_spbRxInterval_editingFinished();
 
     void on_btnTxFile_clicked(bool checked);
 
     void on_btnClear_clicked();
 
     void on_pushButton_clicked();
-
 
 private:
     Ui::SerialAssistant *ui;

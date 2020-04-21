@@ -26,6 +26,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QSpinBox>
+#include <QtWidgets/QSplitter>
 #include <QtWidgets/QTextBrowser>
 #include <QtWidgets/QToolBox>
 #include <QtWidgets/QVBoxLayout>
@@ -64,8 +65,6 @@ public:
     QCheckBox *checkBox_5;
     QPushButton *btnSaveFile;
     QPushButton *btnClear;
-    QPushButton *btnPause;
-    QSpinBox *spbRxInterval;
     QGroupBox *QGBCtrlTx;
     QSpinBox *spbTxInterval;
     QLabel *lblFileSize;
@@ -87,6 +86,7 @@ public:
     QLabel *label;
     QSpacerItem *verticalSpacer_3;
     QVBoxLayout *verticalLayout;
+    QSplitter *splitter;
     QPlainTextEdit *textBrower;
     QToolBox *toolBox;
     QWidget *single;
@@ -132,7 +132,7 @@ public:
     {
         if (SerialAssistant->objectName().isEmpty())
             SerialAssistant->setObjectName(QStringLiteral("SerialAssistant"));
-        SerialAssistant->resize(969, 679);
+        SerialAssistant->resize(972, 652);
         QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -276,14 +276,14 @@ public:
         QGBCtrlRx->setObjectName(QStringLiteral("QGBCtrlRx"));
         sizePolicy1.setHeightForWidth(QGBCtrlRx->sizePolicy().hasHeightForWidth());
         QGBCtrlRx->setSizePolicy(sizePolicy1);
-        QGBCtrlRx->setMinimumSize(QSize(171, 131));
-        QGBCtrlRx->setMaximumSize(QSize(171, 131));
+        QGBCtrlRx->setMinimumSize(QSize(171, 80));
+        QGBCtrlRx->setMaximumSize(QSize(171, 80));
         QGBCtrlRx->setStyleSheet(QStringLiteral(""));
         QGBCtrlRx->setFlat(false);
         QGBCtrlRx->setCheckable(false);
         layoutWidget1 = new QWidget(QGBCtrlRx);
         layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
-        layoutWidget1->setGeometry(QRect(10, 80, 151, 21));
+        layoutWidget1->setGeometry(QRect(10, 50, 151, 21));
         horizontalLayout_3 = new QHBoxLayout(layoutWidget1);
         horizontalLayout_3->setSpacing(6);
         horizontalLayout_3->setContentsMargins(11, 11, 11, 11);
@@ -296,38 +296,23 @@ public:
 
         checkBox_5 = new QCheckBox(layoutWidget1);
         checkBox_5->setObjectName(QStringLiteral("checkBox_5"));
+        checkBox_5->setChecked(true);
 
         horizontalLayout_3->addWidget(checkBox_5);
 
         btnSaveFile = new QPushButton(QGBCtrlRx);
         btnSaveFile->setObjectName(QStringLiteral("btnSaveFile"));
-        btnSaveFile->setGeometry(QRect(10, 50, 151, 26));
+        btnSaveFile->setGeometry(QRect(80, 20, 86, 26));
         QIcon icon3;
         icon3.addFile(QStringLiteral(":/action/action/filesave.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnSaveFile->setIcon(icon3);
         btnSaveFile->setCheckable(true);
         btnClear = new QPushButton(QGBCtrlRx);
         btnClear->setObjectName(QStringLiteral("btnClear"));
-        btnClear->setGeometry(QRect(10, 20, 66, 23));
+        btnClear->setGeometry(QRect(10, 20, 61, 23));
         QIcon icon4;
         icon4.addFile(QStringLiteral(":/action/action/clear.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnClear->setIcon(icon4);
-        btnPause = new QPushButton(QGBCtrlRx);
-        btnPause->setObjectName(QStringLiteral("btnPause"));
-        btnPause->setGeometry(QRect(95, 20, 66, 23));
-        QIcon icon5;
-        icon5.addFile(QStringLiteral(":/action/action/pause.png"), QSize(), QIcon::Normal, QIcon::Off);
-        icon5.addFile(QStringLiteral(":/action/action/play.png"), QSize(), QIcon::Normal, QIcon::On);
-        btnPause->setIcon(icon5);
-        btnPause->setCheckable(true);
-        spbRxInterval = new QSpinBox(QGBCtrlRx);
-        spbRxInterval->setObjectName(QStringLiteral("spbRxInterval"));
-        spbRxInterval->setGeometry(QRect(10, 100, 151, 20));
-        spbRxInterval->setMinimumSize(QSize(61, 18));
-        spbRxInterval->setAutoFillBackground(false);
-        spbRxInterval->setMinimum(30);
-        spbRxInterval->setMaximum(99999);
-        spbRxInterval->setValue(99);
 
         verticalLayout_3->addWidget(QGBCtrlRx);
 
@@ -345,9 +330,9 @@ public:
         spbTxInterval->setGeometry(QRect(10, 220, 151, 20));
         spbTxInterval->setMinimumSize(QSize(61, 18));
         spbTxInterval->setAutoFillBackground(false);
-        spbTxInterval->setMinimum(30);
+        spbTxInterval->setMinimum(20);
         spbTxInterval->setMaximum(99999);
-        spbTxInterval->setValue(99);
+        spbTxInterval->setValue(50);
         lblFileSize = new QLabel(QGBCtrlTx);
         lblFileSize->setObjectName(QStringLiteral("lblFileSize"));
         lblFileSize->setGeometry(QRect(10, 50, 151, 16));
@@ -357,16 +342,16 @@ public:
         btnLoadFile = new QPushButton(QGBCtrlTx);
         btnLoadFile->setObjectName(QStringLiteral("btnLoadFile"));
         btnLoadFile->setGeometry(QRect(12, 24, 61, 21));
-        QIcon icon6;
-        icon6.addFile(QStringLiteral(":/action/action/fileopen.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnLoadFile->setIcon(icon6);
+        QIcon icon5;
+        icon5.addFile(QStringLiteral(":/action/action/fileopen.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnLoadFile->setIcon(icon5);
         btnLoadFile->setCheckable(true);
         btnTxFile = new QPushButton(QGBCtrlTx);
         btnTxFile->setObjectName(QStringLiteral("btnTxFile"));
         btnTxFile->setGeometry(QRect(80, 24, 81, 21));
-        QIcon icon7;
-        icon7.addFile(QStringLiteral(":/action/action/mail_forward.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnTxFile->setIcon(icon7);
+        QIcon icon6;
+        icon6.addFile(QStringLiteral(":/action/action/mail_forward.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnTxFile->setIcon(icon6);
         btnTxFile->setIconSize(QSize(16, 16));
         btnTxFile->setCheckable(true);
         lblTerminator = new QLabel(QGBCtrlTx);
@@ -453,12 +438,15 @@ public:
         verticalLayout_3->addItem(verticalSpacer_3);
 
 
-        gridLayout->addLayout(verticalLayout_3, 0, 0, 6, 1);
+        gridLayout->addLayout(verticalLayout_3, 0, 0, 1, 1);
 
         verticalLayout = new QVBoxLayout();
         verticalLayout->setSpacing(6);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        textBrower = new QPlainTextEdit(SerialAssistant);
+        splitter = new QSplitter(SerialAssistant);
+        splitter->setObjectName(QStringLiteral("splitter"));
+        splitter->setOrientation(Qt::Vertical);
+        textBrower = new QPlainTextEdit(splitter);
         textBrower->setObjectName(QStringLiteral("textBrower"));
         QSizePolicy sizePolicy3(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
         sizePolicy3.setHorizontalStretch(0);
@@ -466,18 +454,16 @@ public:
         sizePolicy3.setHeightForWidth(textBrower->sizePolicy().hasHeightForWidth());
         textBrower->setSizePolicy(sizePolicy3);
         textBrower->setMinimumSize(QSize(287, 200));
-
-        verticalLayout->addWidget(textBrower);
-
-        toolBox = new QToolBox(SerialAssistant);
+        splitter->addWidget(textBrower);
+        toolBox = new QToolBox(splitter);
         toolBox->setObjectName(QStringLiteral("toolBox"));
         sizePolicy2.setHeightForWidth(toolBox->sizePolicy().hasHeightForWidth());
         toolBox->setSizePolicy(sizePolicy2);
         toolBox->setMinimumSize(QSize(287, 200));
-        toolBox->setMaximumSize(QSize(16777215, 200));
+        toolBox->setMaximumSize(QSize(16777215, 209));
         single = new QWidget();
         single->setObjectName(QStringLiteral("single"));
-        single->setGeometry(QRect(0, 0, 770, 148));
+        single->setGeometry(QRect(0, 0, 773, 157));
         gridLayout_4 = new QGridLayout(single);
         gridLayout_4->setSpacing(6);
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
@@ -501,9 +487,9 @@ public:
         sizePolicy1.setHeightForWidth(btnSend->sizePolicy().hasHeightForWidth());
         btnSend->setSizePolicy(sizePolicy1);
         btnSend->setMinimumSize(QSize(71, 41));
-        QIcon icon8;
-        icon8.addFile(QString::fromUtf8(":/general/general/\345\217\221\351\200\201.png"), QSize(), QIcon::Normal, QIcon::Off);
-        btnSend->setIcon(icon8);
+        QIcon icon7;
+        icon7.addFile(QString::fromUtf8(":/general/general/\345\217\221\351\200\201.png"), QSize(), QIcon::Normal, QIcon::Off);
+        btnSend->setIcon(icon7);
         btnSend->setIconSize(QSize(70, 50));
 
         gridLayout_4->addWidget(btnSend, 0, 0, 1, 1);
@@ -511,7 +497,7 @@ public:
         toolBox->addItem(single, QString::fromUtf8("\345\215\225\346\235\241\345\217\221\351\200\201"));
         multi = new QWidget();
         multi->setObjectName(QStringLiteral("multi"));
-        multi->setGeometry(QRect(0, 0, 756, 152));
+        multi->setGeometry(QRect(0, 0, 773, 157));
         gridLayout_2 = new QGridLayout(multi);
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -667,8 +653,9 @@ public:
         gridLayout_2->addWidget(txtLine10, 4, 5, 1, 1);
 
         toolBox->addItem(multi, QString::fromUtf8("\345\244\232\346\235\241\345\217\221\351\200\201"));
+        splitter->addWidget(toolBox);
 
-        verticalLayout->addWidget(toolBox);
+        verticalLayout->addWidget(splitter);
 
         progressBar = new QProgressBar(SerialAssistant);
         progressBar->setObjectName(QStringLiteral("progressBar"));
@@ -683,7 +670,7 @@ public:
         verticalLayout->addWidget(progressBar);
 
 
-        gridLayout->addLayout(verticalLayout, 0, 2, 6, 1);
+        gridLayout->addLayout(verticalLayout, 0, 1, 1, 1);
 
         QWidget::setTabOrder(cbbPortNum, cbbBaud);
         QWidget::setTabOrder(cbbBaud, cbbDataBit);
@@ -694,12 +681,10 @@ public:
         QWidget::setTabOrder(btnOpenPort, chkFlowCtrlDTR);
         QWidget::setTabOrder(chkFlowCtrlDTR, chkFlowCtrlRTS);
         QWidget::setTabOrder(chkFlowCtrlRTS, btnClear);
-        QWidget::setTabOrder(btnClear, btnPause);
-        QWidget::setTabOrder(btnPause, btnSaveFile);
+        QWidget::setTabOrder(btnClear, btnSaveFile);
         QWidget::setTabOrder(btnSaveFile, chkDisplayHex);
         QWidget::setTabOrder(chkDisplayHex, checkBox_5);
-        QWidget::setTabOrder(checkBox_5, spbRxInterval);
-        QWidget::setTabOrder(spbRxInterval, btnLoadFile);
+        QWidget::setTabOrder(checkBox_5, btnLoadFile);
         QWidget::setTabOrder(btnLoadFile, btnTxFile);
         QWidget::setTabOrder(btnTxFile, cbbTerminator);
         QWidget::setTabOrder(cbbTerminator, cbbVerifyStyle);
@@ -768,17 +753,11 @@ public:
         btnRefresh->setText(QApplication::translate("SerialAssistant", "\345\210\267\346\226\260", Q_NULLPTR));
         chkFlowCtrlDTR->setText(QApplication::translate("SerialAssistant", "DTR", Q_NULLPTR));
         chkFlowCtrlRTS->setText(QApplication::translate("SerialAssistant", "RTS", Q_NULLPTR));
-        QGBCtrlRx->setTitle(QApplication::translate("SerialAssistant", "\351\200\232\347\224\250\346\216\245\346\224\266\346\216\247\345\210\266", Q_NULLPTR));
+        QGBCtrlRx->setTitle(QApplication::translate("SerialAssistant", "\346\216\245\346\224\266\346\216\247\345\210\266", Q_NULLPTR));
         chkDisplayHex->setText(QApplication::translate("SerialAssistant", "Hex\346\230\276\347\244\272", Q_NULLPTR));
         checkBox_5->setText(QApplication::translate("SerialAssistant", "\345\212\240\346\227\266\351\227\264\346\210\263", Q_NULLPTR));
-        btnSaveFile->setText(QApplication::translate("SerialAssistant", "\344\277\235\345\255\230\350\207\263\346\226\207\344\273\266...", Q_NULLPTR));
+        btnSaveFile->setText(QApplication::translate("SerialAssistant", "\344\277\235\345\255\230\350\207\263\346\226\207\344\273\266", Q_NULLPTR));
         btnClear->setText(QApplication::translate("SerialAssistant", "\346\270\205\347\251\272", Q_NULLPTR));
-        btnPause->setText(QApplication::translate("SerialAssistant", "\346\232\202\345\201\234", Q_NULLPTR));
-#ifndef QT_NO_TOOLTIP
-        spbRxInterval->setToolTip(QApplication::translate("SerialAssistant", "\346\234\200\345\260\21730ms", Q_NULLPTR));
-#endif // QT_NO_TOOLTIP
-        spbRxInterval->setSuffix(QApplication::translate("SerialAssistant", " ms \346\216\245\346\224\266\344\270\200\346\254\241", Q_NULLPTR));
-        spbRxInterval->setPrefix(QApplication::translate("SerialAssistant", "\351\227\264\351\232\224 ", Q_NULLPTR));
         QGBCtrlTx->setTitle(QApplication::translate("SerialAssistant", "\350\207\252\345\212\250\345\217\221\351\200\201\346\216\247\345\210\266", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
         spbTxInterval->setToolTip(QApplication::translate("SerialAssistant", "\346\234\200\345\260\21730ms", Q_NULLPTR));

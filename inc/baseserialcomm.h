@@ -5,6 +5,10 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QAbstractItemView>
+#include <QMessageBox>
+#include <QMetaEnum>
+#include <QDebug>
+#include "crc.h"
 
 #define USE_CRC_MODULE // 使用 CRC校验模块才会使用这个宏
 class BaseSerialComm : public QSerialPort,public QSerialPortInfo
@@ -62,21 +66,18 @@ public:
     static void listTerminator  (QComboBox *cbbTerminator);
     static void listVerifyStyle (QComboBox *cbbVerifyStyle);
     static void searchPort      (QStringList &portList);
-    static quint8 verifyADD8    (QByteArray  buf );
-    static quint8 verifyXOR8    (QByteArray  buf );
-    static QByteArray verifyCRC16   (QByteArray  buf);
-    static QByteArray verifyCRC16_CCITT(QByteArray buf);
-    static QByteArray verifyCRC32(QByteArray buf);
-    static QByteArray verifyLRC( QByteArray buf );
+
+    quint8 verifyADD8    (QByteArray  buf );
+    quint8 verifyXOR8    (QByteArray  buf );
+    quint16 verifyCRC16_Modbus(QByteArray buf);
+    quint16 verifyCRC16_CCITT(QByteArray buf);
+    quint32 verifyCRC32(QByteArray buf);
+    quint16 verifyLRC( QByteArray buf );
     static bool isHexString(QString src);
 
 
-//    static void verifyCon?stant  (QByteArray &buf,  qint32 size);
-    QByteArray insertVerify(QByteArray &buf, int start, int end, int VerifyStyle);
     qint32 readData   (QByteArray &rxBuffer);
     qint32 writtenData(QString txBuffer);
-    void setDTRState(bool set);
-    void setRTSState(bool set);
     void insertTerminator(QByteArray &buffer,BaseSerialComm::Terminator terminator);
 
 
