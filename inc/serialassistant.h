@@ -1,7 +1,7 @@
 #ifndef SERIALASSISTANT_H
 #define SERIALASSISTANT_H
 
-#include <QWidget>
+//#include <QWidget>
 #include <QSerialPortInfo>
 #include "baseserialcomm.h"
 #include <QTimer>
@@ -10,7 +10,12 @@
 #include <QTextStream>
 #include <QPushButton>
 #include <QCheckBox>
-//#include <QSharedMemory>
+#include <QMessageBox>
+#include <QMetaEnum>
+#include <QFileDialog>
+#include <QTextCodec>
+#include <QKeyEvent>
+#include <QStyleFactory>
 
 
 namespace Ui {
@@ -22,6 +27,20 @@ class SerialAssistant : public QWidget
     Q_OBJECT
 
 public:
+
+    enum VerifyStyle{
+        AddVerifyItem      = 0,
+        ADD8               = 1,
+        NADD8              = 2,
+        XOR8               = 3,
+        CRC_Modbus         = 4,
+        CRC_Xmodem         = 5,
+        CRC32              = 6,
+        LRC                = 7, // Longitudinal Redundancy Check
+        UnknownStyle       = -1
+    };
+    Q_ENUM(VerifyStyle)
+
     explicit SerialAssistant(QWidget *parent = 0);
     ~SerialAssistant();
 
@@ -31,46 +50,36 @@ public:
 
     QList<QString> saveText;  // 用于临时保存文本数据
     QList<QString> saveArray; // 用于临时保存Hex数据
-    QTimer rxTimer; // 接收用的定时器
     QTimer txTimer; // 发送用的定时器
-
 
     QFile   *saveFile;
     QFile   *loadFile;
     QTextStream *txtStreamSave = NULL;
+
     BaseSerialComm *currentPort;   // 端口号
-    QByteArray rxBuffer;
-    qint32 rxCount = 0;
-    quint32 txCount = 0;
-    QVector < QPushButton *> multiPushButton;
-    QVector < QLineEdit *> multiTxtLine;
-    QVector < QCheckBox *> multiCheckBox;
+    QByteArray rxBuffer;           // 接收缓存
+    qint32 rxCount = 0;            // 接收字节计数
+    quint32 txCount = 0;           // 发送字节计数
+    QVector < QPushButton *> multiPushButton; // 按键数组
+    QVector < QLineEdit *> multiTxtLine;      // 数组
+    QVector < QCheckBox *> multiCheckBox;     //
 
-    QTimer rxTimeout; // 超时接收
-
-    qint32 rxBufSize = 64*1024; // 64k buffer
-    QTimer txtFlashTime;        // ui更新事件
+    qint32 rxBufSize = 1024*1024; // 64k buffer
+    QTimer txtFlashTime;        // ui定时更新
     bool rxFlag = false ;
     QTime rxTimeStamp;          // 接收数据时间戳
-    QFile rxFile;
-    uchar *rxFilePtr;
 
-
-    void insertTimeStramp(QByteArray &tmp);
-
-    void initComboBox_Config();    // 初始化串口配置的下拉列表(ComboBox)
-    void configPort();
-    void deleteRxTimer();
-    void deleteTxTimer();
-    void startTxTimer();
-
-    bool isHexString(QString src);
+    void insertTimeStramp(QByteArray &tmp);// 插入时间戳
+    void initComboBox_Config();            // 初始化串口配置的下拉列表(ComboBox)
+    void configPort();                     // 初始化配置串口
+    void deleteTxTimer();                  // 停止发送定时器
+    void startTxTimer();                   // 启动发送定时器
     QByteArray stringToSend(QString src, bool txInHex, bool &ok );
+    QByteArray insertVerify(QByteArray &tmp); // 插入校验码
+    void listVerifyStyle(QComboBox *cbbVerifyStyle);// 列出校验码QCombobox控件
 
 signals:
     void signals_displayTxBuffer(QByteArray);
-
-    void signals_rxBufIsFull();
 
 public slots:
 
@@ -81,9 +90,6 @@ public slots:
     void slots_multiSend();
     void slots_timeOutProgressBar();
     void slots_displayTxBuffer(QByteArray);
-//    void slots_rxTimeOut();
-
-    void slots_rxBufIsFull();
     void slots_rxDisplayTxt();
 
 private slots:
@@ -119,7 +125,6 @@ private slots:
 
 private:
     Ui::SerialAssistant *ui;
-//    QTime rxTimeout;
 
 };
 

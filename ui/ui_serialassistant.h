@@ -132,7 +132,7 @@ public:
     {
         if (SerialAssistant->objectName().isEmpty())
             SerialAssistant->setObjectName(QStringLiteral("SerialAssistant"));
-        SerialAssistant->resize(972, 652);
+        SerialAssistant->resize(969, 652);
         QSizePolicy sizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
@@ -309,7 +309,7 @@ public:
         btnSaveFile->setCheckable(true);
         btnClear = new QPushButton(QGBCtrlRx);
         btnClear->setObjectName(QStringLiteral("btnClear"));
-        btnClear->setGeometry(QRect(10, 20, 61, 23));
+        btnClear->setGeometry(QRect(10, 20, 66, 26));
         QIcon icon4;
         icon4.addFile(QStringLiteral(":/action/action/clear.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnClear->setIcon(icon4);
@@ -338,43 +338,45 @@ public:
         lblFileSize->setGeometry(QRect(10, 50, 151, 16));
         cbbVerifyStyle = new QComboBox(QGBCtrlTx);
         cbbVerifyStyle->setObjectName(QStringLiteral("cbbVerifyStyle"));
-        cbbVerifyStyle->setGeometry(QRect(10, 100, 151, 22));
+        cbbVerifyStyle->setGeometry(QRect(10, 105, 151, 22));
         btnLoadFile = new QPushButton(QGBCtrlTx);
         btnLoadFile->setObjectName(QStringLiteral("btnLoadFile"));
-        btnLoadFile->setGeometry(QRect(12, 24, 61, 21));
+        btnLoadFile->setGeometry(QRect(12, 24, 66, 26));
         QIcon icon5;
         icon5.addFile(QStringLiteral(":/action/action/fileopen.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnLoadFile->setIcon(icon5);
+        btnLoadFile->setIconSize(QSize(22, 22));
         btnLoadFile->setCheckable(true);
         btnTxFile = new QPushButton(QGBCtrlTx);
         btnTxFile->setObjectName(QStringLiteral("btnTxFile"));
-        btnTxFile->setGeometry(QRect(80, 24, 81, 21));
+        btnTxFile->setGeometry(QRect(95, 24, 66, 26));
         QIcon icon6;
         icon6.addFile(QStringLiteral(":/action/action/mail_forward.png"), QSize(), QIcon::Normal, QIcon::Off);
         btnTxFile->setIcon(icon6);
-        btnTxFile->setIconSize(QSize(16, 16));
+        btnTxFile->setIconSize(QSize(26, 26));
         btnTxFile->setCheckable(true);
         lblTerminator = new QLabel(QGBCtrlTx);
         lblTerminator->setObjectName(QStringLiteral("lblTerminator"));
-        lblTerminator->setGeometry(QRect(11, 73, 51, 16));
+        lblTerminator->setGeometry(QRect(11, 75, 51, 16));
         cbbTerminator = new QComboBox(QGBCtrlTx);
         cbbTerminator->setObjectName(QStringLiteral("cbbTerminator"));
-        cbbTerminator->setGeometry(QRect(60, 70, 101, 22));
+        cbbTerminator->setGeometry(QRect(60, 75, 101, 22));
         txtVerify = new QTextBrowser(QGBCtrlTx);
         txtVerify->setObjectName(QStringLiteral("txtVerify"));
-        txtVerify->setGeometry(QRect(10, 170, 151, 21));
+        txtVerify->setGeometry(QRect(10, 165, 151, 21));
         txtVerify->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         txtVerify->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         spbStart = new QSpinBox(QGBCtrlTx);
         spbStart->setObjectName(QStringLiteral("spbStart"));
-        spbStart->setGeometry(QRect(10, 130, 151, 22));
+        spbStart->setGeometry(QRect(10, 125, 151, 22));
         spbStart->setStyleSheet(QStringLiteral(""));
-        spbStart->setMaximum(2048);
+        spbStart->setMinimum(1);
+        spbStart->setMaximum(9999999);
         spbStart->setValue(1);
         spbStart->setDisplayIntegerBase(10);
         spbEnd = new QSpinBox(QGBCtrlTx);
         spbEnd->setObjectName(QStringLiteral("spbEnd"));
-        spbEnd->setGeometry(QRect(10, 150, 151, 22));
+        spbEnd->setGeometry(QRect(10, 145, 151, 22));
         spbEnd->setStyleSheet(QStringLiteral(""));
         spbEnd->setMaximum(2048);
         spbEnd->setValue(0);
@@ -463,7 +465,7 @@ public:
         toolBox->setMaximumSize(QSize(16777215, 209));
         single = new QWidget();
         single->setObjectName(QStringLiteral("single"));
-        single->setGeometry(QRect(0, 0, 773, 157));
+        single->setGeometry(QRect(0, 0, 770, 157));
         gridLayout_4 = new QGridLayout(single);
         gridLayout_4->setSpacing(6);
         gridLayout_4->setContentsMargins(11, 11, 11, 11);
@@ -497,7 +499,7 @@ public:
         toolBox->addItem(single, QString::fromUtf8("\345\215\225\346\235\241\345\217\221\351\200\201"));
         multi = new QWidget();
         multi->setObjectName(QStringLiteral("multi"));
-        multi->setGeometry(QRect(0, 0, 773, 157));
+        multi->setGeometry(QRect(0, 0, 770, 157));
         gridLayout_2 = new QGridLayout(multi);
         gridLayout_2->setSpacing(6);
         gridLayout_2->setContentsMargins(11, 11, 11, 11);
@@ -769,10 +771,12 @@ public:
         cbbVerifyStyle->setToolTip(QApplication::translate("SerialAssistant", "<html><head/><body><p><span style=\" font-weight:600;\">ADD8:</span>\345\260\206\346\225\260\346\215\256\347\264\257\345\212\240,\345\217\226\344\275\2168\344\275\215</p><p><span style=\" font-weight:600;\">NADD8:</span>\345\260\206\346\225\260\346\215\256\347\264\257\345\212\240,\345\217\226\344\275\2168\344\275\215,\347\204\266\345\220\216\345\217\226\345\217\215\345\212\2401</p><p><span style=\" font-weight:600;\">XOR8:</span>\345\260\2068\344\275\215\346\225\260\346\215\256\345\274\202\346\210\226</p><p><span style=\" font-weight:600;\">CRC16_Modbus:</span>\347\224\250\344\272\216Modbus-RTU\345\215\217\350\256\256,\350\276\223\345\207\272\345\255\227\350\212\202\345\217\215\345\272\217,\344\275\216\344\275\215\345\255\227\350\212\202\345\234\250\345\211\215,\351\253\230\344\275\215\345\255\227\350\212\202\345\234\250\345\220\216</p><p><span style=\" font-weight:600;\">CRC16_XModem:</span>\345\244\232\351\241\271\345\274\2170x1021,\347\224\250\344\272\216Xmodem\345\215\217\350\256\256</p><p><span style=\" f"
                         "ont-weight:600;\">CRC32:</span>\345\244\232\351\241\271\345\274\2170x04C11DB7 IEEE 802.3\346\240\207\345\207\206</p><p><span style=\" font-weight:600;\">LRC:</span>NADD8\347\232\204\345\255\227\347\254\246\346\250\241\345\274\217,\344\270\223\347\224\250\344\272\216\345\255\227\347\254\246\345\217\221\351\200\201\346\250\241\345\274\217,\345\217\252\344\274\232\347\273\237\350\256\241\345\255\227\347\254\246\344\270\262\344\270\255HEX\346\240\274\345\274\217\347\232\204\346\225\260\346\215\256,\346\240\241\351\252\214\347\256\227\346\263\225\344\270\216NADD8\344\270\200\350\207\264,\345\276\227\345\210\260\347\232\2041\345\255\227\350\212\202\345\206\215\345\210\206\346\213\206\346\210\220\344\270\244\344\270\252ASCII\345\255\227\347\254\246(\347\224\250\344\272\216Mosbus-ASCII)</p></body></html>", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
-        btnLoadFile->setText(QApplication::translate("SerialAssistant", "Load", Q_NULLPTR));
-        btnTxFile->setText(QApplication::translate("SerialAssistant", "Send", Q_NULLPTR));
+        btnLoadFile->setText(QApplication::translate("SerialAssistant", " Load", Q_NULLPTR));
+        btnTxFile->setText(QApplication::translate("SerialAssistant", " Send", Q_NULLPTR));
         lblTerminator->setText(QApplication::translate("SerialAssistant", "\350\207\252\345\212\250\346\267\273\345\212\240", Q_NULLPTR));
-        spbStart->setSpecialValueText(QApplication::translate("SerialAssistant", "\344\270\215\350\203\275\344\275\216\344\272\2160", Q_NULLPTR));
+#ifndef QT_NO_TOOLTIP
+        spbStart->setToolTip(QApplication::translate("SerialAssistant", "\345\214\205\345\220\253\347\254\254n\344\270\252\345\255\227\347\254\246", Q_NULLPTR));
+#endif // QT_NO_TOOLTIP
         spbStart->setSuffix(QApplication::translate("SerialAssistant", "\344\270\252\345\255\227\347\254\246\345\274\200\345\247\213", Q_NULLPTR));
         spbStart->setPrefix(QApplication::translate("SerialAssistant", "\344\273\216\347\254\254", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP

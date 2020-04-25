@@ -124,25 +124,7 @@ void BaseSerialComm::listTerminator(QComboBox *cbbTerminator)
     cbbTerminator->setCurrentText("NONE"); // 设定默认值
 }
 
-/**
- * @brief BaseSerialComm::listVerifyStyle 列出支持的校验功能
- * @param cbbVerifyStyle
- */
-void BaseSerialComm::listVerifyStyle(QComboBox *cbbVerifyStyle)
-{
-    QMetaEnum mtaEnum = QMetaEnum::fromType<BaseSerialComm::VerifyStyle>();
-    for (int i = 0; i < mtaEnum.keyCount(); i++) {
-        if(i == 0){
-            cbbVerifyStyle->addItem("添加校验码", mtaEnum.value(i));
-        }else{
-            cbbVerifyStyle->addItem(mtaEnum.key(i), mtaEnum.value(i));
-        }
-        /* 删除未知值 */
-        if(mtaEnum.value(i) == BaseSerialComm::VerifyStyle::UnknownStyle)
-            cbbVerifyStyle->removeItem(i);
-    }
-    cbbVerifyStyle->setCurrentText("添加校验码"); // 设定默认值
-}
+
 
 /**
  * @brief BaseSerialComm::searchPort 搜索端口号
@@ -271,7 +253,7 @@ quint16 BaseSerialComm::verifyCRC16_Modbus(QByteArray buf)
 quint16 BaseSerialComm::verifyCRC16_CCITT(QByteArray buf)
 {
     quint16 crc16;
-    crc16 = crc16_ccitt_calc((uint8_t *)buf.data(),buf.size());
+    crc16 = crc16_xmodem_calc((uint8_t *)buf.data(),buf.size());
     return crc16;
 }
 /**

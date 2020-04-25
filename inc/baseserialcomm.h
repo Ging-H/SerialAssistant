@@ -10,7 +10,6 @@
 #include <QDebug>
 #include "crc.h"
 
-#define USE_CRC_MODULE // 使用 CRC校验模块才会使用这个宏
 class BaseSerialComm : public QSerialPort,public QSerialPortInfo
 {
     Q_OBJECT
@@ -43,18 +42,7 @@ public:
     };
     Q_ENUM(Terminator)
 
-    enum VerifyStyle{
-        AddVerifyItem      = 0,
-        ADD8               = 1,
-        NADD8              = 2,
-        XOR8               = 3,
-        CRC_Modbus         = 4,
-        CRC_Xmodem         = 5,
-        CRC32              = 6,
-        LRC                = 7, // Longitudinal Redundancy Check
-        UnknownStyle       = -1
-    };
-    Q_ENUM(VerifyStyle)
+
 
     explicit BaseSerialComm(QSerialPort *parent = nullptr);
 
@@ -64,7 +52,6 @@ public:
     static void listDataBit     (QComboBox *cbbDataBit);
     static void listPortNum     (QComboBox *cbbPortNum);
     static void listTerminator  (QComboBox *cbbTerminator);
-    static void listVerifyStyle (QComboBox *cbbVerifyStyle);
     static void searchPort      (QStringList &portList);
 
     quint8 verifyADD8    (QByteArray  buf );
@@ -79,8 +66,6 @@ public:
     qint32 readData   (QByteArray &rxBuffer);
     qint32 writtenData(QString txBuffer);
     void insertTerminator(QByteArray &buffer,BaseSerialComm::Terminator terminator);
-
-
 
 signals:
 
