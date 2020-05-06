@@ -2897,7 +2897,6 @@ uint32_t crc32_q_calc(uint8_t *data, uint32_t length)
         tmp = (crc >> 24) ^ (*data++);    // crc ^= *data; data++;
         crc = (crc << 8) ^ crc32Q_table[tmp&0xFF];
     }
+
     return crc; // crc
 }
-
-

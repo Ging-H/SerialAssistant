@@ -40,8 +40,7 @@ HEADERS += \
 FORMS += \
         ui/serialassistant.ui
 
-RESOURCES += \
-        res/images.qrc
+RESOURCES += res/images.qrc
 
 RC_ICONS = /res/general/ing10.ico
 

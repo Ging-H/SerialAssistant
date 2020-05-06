@@ -124,8 +124,6 @@ void BaseSerialComm::listTerminator(QComboBox *cbbTerminator)
     cbbTerminator->setCurrentText("NONE"); // 设定默认值
 }
 
-
-
 /**
  * @brief BaseSerialComm::searchPort 搜索端口号
  * @param portList
@@ -253,7 +251,7 @@ quint16 BaseSerialComm::verifyCRC16_Modbus(QByteArray buf)
 quint16 BaseSerialComm::verifyCRC16_CCITT(QByteArray buf)
 {
     quint16 crc16;
-    crc16 = crc16_xmodem_calc((uint8_t *)buf.data(),buf.size());
+    crc16 = crc16_ccitt_calc((uint8_t *)buf.data(),buf.size());
     return crc16;
 }
 /**
@@ -299,4 +297,33 @@ uint16_t BaseSerialComm::verifyLRC(QByteArray buf)
     retVal |= tmp;
     return  ( retVal );
 }
-
+/**
+ * @brief BaseSerialComm::verifyCrc8Ds18b20 校验码crc8 一般用于ds18b20
+ * @param buf
+ * @return CRC8
+ */
+uint8_t BaseSerialComm::verifyCRC8_DS18B20(QByteArray buf)
+{
+    uint8_t crc8 = crc8_maxim_calc((uint8_t *)buf.data(), buf.size());
+    return  crc8;
+}
+/**
+ * @brief BaseSerialComm::verifyCrc16Usb 校验码crc16,一般用于usb校验
+ * @param buf
+ * @return CRC16 USB
+ */
+uint16_t BaseSerialComm::verifyCRC16_USB(QByteArray buf)
+{
+    uint16_t crc16 = crc16_usb_calc((uint8_t *)buf.data(), buf.size());
+    return crc16;
+}
+/**
+ * @brief BaseSerialComm::verifyCrc16Ccitt_f 校验码crc16,一般用于ccitt false
+ * @param buf
+ * @return CRC16 CCITT False
+ */
+uint16_t BaseSerialComm::verifyCRC16_CCITT_FALSE(QByteArray buf)
+{
+    uint16_t crc16 = crc16_ccitt_false_calc((uint8_t*)buf.data(), buf.size() );
+    return crc16;
+}

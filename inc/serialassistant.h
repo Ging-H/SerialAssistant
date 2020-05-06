@@ -16,7 +16,8 @@
 #include <QTextCodec>
 #include <QKeyEvent>
 #include <QStyleFactory>
-
+#include <QMenu>
+#include <QSettings>
 
 namespace Ui {
 class SerialAssistant;
@@ -33,10 +34,13 @@ public:
         ADD8               = 1,
         NADD8              = 2,
         XOR8               = 3,
-        CRC_Modbus         = 4,
-        CRC_Xmodem         = 5,
-        CRC32              = 6,
-        LRC                = 7, // Longitudinal Redundancy Check
+        LRC                = 4, // Longitudinal Redundancy Check
+        CRC8_MAXIM_DS18B20 = 5,
+        CRC16_USB          = 6,
+        CRC16_MODBUS       = 7,
+        CRC16_CCITT        = 8,
+        CRC16_CCITT_FALSE  = 9,
+        CRC32              = 10,
         UnknownStyle       = -1
     };
     Q_ENUM(VerifyStyle)
@@ -63,11 +67,13 @@ public:
     QVector < QPushButton *> multiPushButton; // 按键数组
     QVector < QLineEdit *> multiTxtLine;      // 数组
     QVector < QCheckBox *> multiCheckBox;     //
+    quint32 multiGroupCount = 10;
 
-    qint32 rxBufSize = 1024*1024; // 64k buffer
+    qint32 rxBufSize = 1024*1024; // 1M buffer
     QTimer txtFlashTime;        // ui定时更新
     bool rxFlag = false ;
     QTime rxTimeStamp;          // 接收数据时间戳
+
 
     void insertTimeStramp(QByteArray &tmp);// 插入时间戳
     void initComboBox_Config();            // 初始化串口配置的下拉列表(ComboBox)
@@ -77,6 +83,11 @@ public:
     QByteArray stringToSend(QString src, bool txInHex, bool &ok );
     QByteArray insertVerify(QByteArray &tmp); // 插入校验码
     void listVerifyStyle(QComboBox *cbbVerifyStyle);// 列出校验码QCombobox控件
+    void initMultiBtn( QPushButton *btn , quint16 count);
+    void renameTxt(QLineEdit *txt, quint16 count);
+    void renameCkb( QCheckBox *ckb , quint16 count);
+    void loadDefaultConfig();
+
 
 signals:
     void signals_displayTxBuffer(QByteArray);
@@ -91,6 +102,7 @@ public slots:
     void slots_timeOutProgressBar();
     void slots_displayTxBuffer(QByteArray);
     void slots_rxDisplayTxt();
+    void slots_showBtnRightClickMenu(const QPoint &pos);
 
 private slots:
     void on_btnOpenPort_clicked();
@@ -123,7 +135,21 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_btnAddNewGroup_clicked();
+
+    void on_btnDelLastGroup_clicked();
+
+    void on_actionRename_triggered();
+
+    void on_btnSaveGroupData_clicked();
+
+    void on_btnLoadGroupData_clicked();
+
+protected:
+    void closeEvent(QCloseEvent *event);
+
 private:
+    QMenu *btnMenu;
     Ui::SerialAssistant *ui;
 
 };

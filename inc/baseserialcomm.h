@@ -42,8 +42,6 @@ public:
     };
     Q_ENUM(Terminator)
 
-
-
     explicit BaseSerialComm(QSerialPort *parent = nullptr);
 
     static void listVerify      (QComboBox *cbbVerify);
@@ -54,12 +52,17 @@ public:
     static void listTerminator  (QComboBox *cbbTerminator);
     static void searchPort      (QStringList &portList);
 
-    quint8 verifyADD8    (QByteArray  buf );
-    quint8 verifyXOR8    (QByteArray  buf );
-    quint16 verifyCRC16_Modbus(QByteArray buf);
-    quint16 verifyCRC16_CCITT(QByteArray buf);
-    quint32 verifyCRC32(QByteArray buf);
-    quint16 verifyLRC( QByteArray buf );
+    quint8   verifyADD8(QByteArray  buf );
+    quint8   verifyXOR8(QByteArray  buf );
+    quint16  verifyCRC16_Modbus(QByteArray buf);
+    quint16  verifyCRC16_CCITT(QByteArray buf);
+    quint32  verifyCRC32(QByteArray buf);
+    quint16  verifyLRC( QByteArray buf );
+    uint8_t  verifyCRC8_DS18B20(QByteArray buf);
+    uint16_t verifyCRC16_USB(QByteArray buf);
+    uint16_t verifyCRC16_CCITT_FALSE(QByteArray buf);
+
+
     static bool isHexString(QString src);
 
 
