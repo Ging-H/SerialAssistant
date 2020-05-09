@@ -15,17 +15,32 @@ SerialAssistant::SerialAssistant(QWidget *parent) :
     QApplication::setStyle(QStyleFactory::create("fusion"));// fusion 风格
     initComboBox_Config();
 
+    /* ui初始化 */
+    QFile file(":/theme/blackOrange.css");              // QSS文件
+    if (!file.open(QFile::ReadOnly)){  // 打开文件
+        return;
+    }
+    QTextStream in(&file);
+    in.setCodec("UTF-8");
+    QString qss = in.readAll();        // 读取数据
+    qApp->setStyleSheet(qss);          // 应用
+    btnMenu = new QMenu();
+    btnMenu->addAction(ui->actionRename);
+    this->setWindowTitle("硬石电子-串口调试助手 v1.0");
+    ui->toolBox->setCurrentIndex(0);
+
+    /* 功能配置 */
     currentPort = new BaseSerialComm; // 构建一个端口对象
     saveFile = NULL; // 保存文件指针
     connect(currentPort,SIGNAL(errorOccurred(QSerialPort::SerialPortError)),this,SLOT(slots_errorHandler(QSerialPort::SerialPortError)) );
     connect(this->ui->txtSingle,SIGNAL(cursorPositionChanged()),this,SLOT(slots_highlightLine())); // 链接高亮显示 信号->槽
     currentPort->setReadBufferSize(rxBufSize);
 
+    /* 定时显示数据 */
     connect(&txtFlashTime,SIGNAL(timeout()),this,SLOT(slots_rxDisplayTxt()));
     txtFlashTime.start(10);
-
-
     connect(this, SIGNAL( signals_displayTxBuffer(QByteArray )), this,SLOT(slots_displayTxBuffer(QByteArray)),Qt::QueuedConnection);
+
     /* 将多个按钮组合起来 */
     multiPushButton << ui->btnMultiPush01;
     multiPushButton << ui->btnMultiPush02;
@@ -39,8 +54,7 @@ SerialAssistant::SerialAssistant(QWidget *parent) :
     multiPushButton << ui->btnMultiPush10;
 
     quint16 i=0;
-    foreach (QPushButton *MultiPush, multiPushButton) { // 链接点击信号到同一个函数
-        connect(MultiPush,SIGNAL(clicked(bool)),this,SLOT(slots_multiSend()));
+    foreach (QPushButton *MultiPush, multiPushButton) {
         this->initMultiBtn( MultiPush, ++i );
     }
 
@@ -71,25 +85,9 @@ SerialAssistant::SerialAssistant(QWidget *parent) :
     /* 监控输入的文本 */
     disconnect(this->ui->txtSingle,SIGNAL(textChanged()),this,SLOT(on_txtSingle_textChanged()));
 
-    /* 应用主题皮肤 */
-    QFile file(":/theme/blackOrange.css");              // QSS文件
-    if (!file.open(QFile::ReadOnly)){  // 打开文件
-        return;
-    }
-    QTextStream in(&file);
-    in.setCodec("UTF-8");
-    QString qss = in.readAll();        // 读取数据
-    qApp->setStyleSheet(qss);          // 应用
-
-    /* 准备好菜单栏 */
-    btnMenu = new QMenu();
-    btnMenu->addAction(ui->actionRename);
-
-    this->setWindowTitle("硬石电子-串口调试助手 v1.0");
-
-    ui->toolBox->setCurrentIndex(0);
-    this->loadDefaultConfig();
+    this->loadDefaultConfig();// 加载默认的参数设置
 }
+
 /**
  * @brief SerialAssistant::~SerialAssistant 析构函数
  */
@@ -102,9 +100,9 @@ SerialAssistant::~SerialAssistant()
     delete ui;
 }
 
-
 /* ----------------------------------------------------- */
 /* ui响应事件 */
+
 /**
  * @brief SerialAssistant::listVerifyStyle 列出支持的校验功能
  * @param cbbVerifyStyle
@@ -114,7 +112,7 @@ void SerialAssistant::listVerifyStyle(QComboBox *cbbVerifyStyle)
     QMetaEnum mtaEnum = QMetaEnum::fromType<SerialAssistant::VerifyStyle>();
     for (int i = 0; i < mtaEnum.keyCount(); i++) {
         if(i == 0){
-            cbbVerifyStyle->addItem("添加校验码", mtaEnum.value(i));
+            cbbVerifyStyle->addItem("校验码", mtaEnum.value(i));
         }else{
             cbbVerifyStyle->addItem(mtaEnum.key(i), mtaEnum.value(i));
         }
@@ -122,7 +120,7 @@ void SerialAssistant::listVerifyStyle(QComboBox *cbbVerifyStyle)
         if(mtaEnum.value(i) == SerialAssistant::VerifyStyle::UnknownStyle)
             cbbVerifyStyle->removeItem(i);
     }
-    cbbVerifyStyle->setCurrentText("添加校验码"); // 设定默认值
+    cbbVerifyStyle->setCurrentText("校验码"); // 设定默认值
 }
 
 /**
@@ -139,7 +137,6 @@ void SerialAssistant::initComboBox_Config()
     BaseSerialComm::listTerminator(ui->cbbTerminator);
     this->listVerifyStyle(ui->cbbVerifyStyle);
 }
-
 
 /**
  * @brief SerialAssistant::on_btnOpenPort_clicked 打开并且配置串口
@@ -198,7 +195,6 @@ void SerialAssistant::configPort()
     connect(currentPort ,SIGNAL(readyRead()),this,SLOT( slots_serialRxCallback()));// 接收数据回调
 }
 
-
 /**
  * @brief SerialAssistant::on_btnRefresh_clicked 点击刷新按钮
  */
@@ -209,7 +205,6 @@ void SerialAssistant::on_btnRefresh_clicked()
         BaseSerialComm::listPortNum ( ui -> cbbPortNum );
     }
 }
-
 
 /**
  * @brief SerialAssistant::on_chkFlowCtrlDTR_toggled DTR翻转
@@ -234,7 +229,6 @@ void SerialAssistant::on_chkFlowCtrlRTS_toggled(bool checked)
         currentPort->setRequestToSend(checked);
     }
 }
-
 
 /**
  * @brief SerialAssistant::on_textBrower_textChanged 设置光标到尾部
@@ -303,7 +297,6 @@ void SerialAssistant::on_txtSingle_textChanged()
     }
 }
 
-
 /**
  * @brief SerialAssistant::slots_errorHandler 错误信息处理
  * @param error
@@ -318,7 +311,6 @@ void SerialAssistant::slots_errorHandler(QSerialPort::SerialPortError error)
         break;
     default:break;
     }
-
 }
 
 /**
@@ -478,6 +470,7 @@ void SerialAssistant::on_chbTxHex_clicked(bool checked)
             ui->txtSingle->setPlainText(saveText.at(i));
     }
 }
+
 /**
  * @brief SerialAssistant::slots_displayTxBuffer 显示发送的数据帧
  * @param txBuffer
@@ -492,7 +485,14 @@ void SerialAssistant::slots_displayTxBuffer(QByteArray txBuffer)
         txBuffer = txBuffer.toHex(' ').toUpper();
     }
     txBuffer.insert(0, QTime::currentTime().toString("[hh:mm:ss.zzz]Tx\n"));
-    QString strToDisplay = QString::fromLocal8Bit(txBuffer);
+
+    QString strToDisplay;
+    if(ui->rdbGB18030->isChecked()){
+        QTextCodec *codec = QTextCodec::codecForName("GB18030");
+        strToDisplay = codec->toUnicode( txBuffer );
+    }else{
+        strToDisplay = QString::fromUtf8(txBuffer);
+    }
     ui->textBrower->appendPlainText(strToDisplay);
 }
 
@@ -554,10 +554,16 @@ QByteArray SerialAssistant::stringToSend(QString src, bool txInHex, bool &ok )
         }
         buf = QByteArray::fromHex(tmpTest); // ascii to hex(hex字符串转换成 hex数据 )//0x33 0x33 0x33 0x35 -> 0x33 0x35
     }else{
-        buf = src.toLocal8Bit();// "33 35"->0x33 0x33 0x20 0x33 0x35
+        if( ui->rdbGB18030->isChecked() ){
+            QTextCodec *codec = QTextCodec::codecForName("GB18030");
+            buf = codec->fromUnicode(src);
+        }else{
+            buf = src.toUtf8();
+        }
     }
     return buf;
 }
+
 /**
  * @brief SerialAssistant::insertVerify 插入校验码
  * @param tmp
@@ -581,10 +587,6 @@ QByteArray SerialAssistant::insertVerify(QByteArray &tmp)
     qint32 insertIndex = startIndex + count;
     if (count <= 0)
         return QByteArray();
-
-//    ui->textBrower->insertPlainText(QString("start:%1,count:%2").arg(startIndex).arg(count));
-//    ui->textBrower->insertPlainText(QString("insertIndex:%1").arg(insertIndex));
-
     VerifyStyle verifyType = (VerifyStyle)ui->cbbVerifyStyle->currentIndex();
     QByteArray tmpArray = tmp.mid( startIndex, count );//待校验数据段
 
@@ -751,6 +753,7 @@ void SerialAssistant::on_btnLoadFile_clicked()
         }
     }
 }
+
 /**
  * @brief SerialAssistant::slots_timeOutProgressBar 进图条超时处理,更新进度条
  */
@@ -777,6 +780,7 @@ void SerialAssistant::slots_timeOutProgressBar()
         }
     }
 }
+
 /**
  * @brief SerialAssistant::on_btnTxFile_clicked  发送文件
  * @param checked
@@ -856,9 +860,10 @@ void SerialAssistant::slots_serialRxCallback()
  */
 void SerialAssistant::insertTimeStramp(QByteArray &tmp)
 {
-    QString currentTime = rxTimeStamp.toString("[hh:mm:ss.zzz]Rx:\n");
+    QString currentTime = rxTimeStamp.toString("[hh:mm:ss.zzz]Rx:\r\n");
     tmp.prepend( currentTime.toLocal8Bit() );
 }
+
 /**
  * @brief SerialAssistant::slots_rxDisplayTxt 接收显示函数
  */
@@ -870,20 +875,32 @@ void SerialAssistant::slots_rxDisplayTxt()
         QByteArray tmp = currentPort->readAll();
         /* 读取数据,empty代表没有再接收到数据 */
         if( tmp.isEmpty() ){
-            //TODO:处理串口接收
             if(rxBuffer.isEmpty())return;
             tmp = rxBuffer;
             if(ui->chkDisplayHex->isChecked()){
                 tmp = tmp.toHex(' ').toUpper();
             }
+            QString str ;
             if(ui->checkBox_5->isChecked()){
                 this->insertTimeStramp( tmp );
-                ui->textBrower->appendPlainText(QString::fromLocal8Bit(tmp));
+                if( ui->rdbGB18030->isChecked() ){
+                    QTextCodec *codec = QTextCodec::codecForName("GB18030");
+                    str = codec->toUnicode(tmp);
+                }else {
+                    str = QString::fromUtf8(tmp);
+                }
+                ui->textBrower->appendPlainText(str);
             }else{
-                ui->textBrower->insertPlainText(QString::fromLocal8Bit(tmp));
+                if( ui->rdbGB18030->isChecked() ){
+                    QTextCodec *codec = QTextCodec::codecForName("GB18030");
+                    str = codec->toUnicode(tmp);
+                }else {
+                    str = QString::fromUtf8(tmp);
+                }
+                ui->textBrower->insertPlainText(str);
             }
             if( txtStreamSave != NULL ){
-                txtStreamSave->operator <<( QString::fromLocal8Bit(tmp) );
+                txtStreamSave->operator<<( str );
             }
             rxBuffer.clear();
             rxFlag = false;// 标记为false,只有在下一次触发readyRead信号的时候才会进入这里
@@ -914,6 +931,7 @@ void SerialAssistant::on_btnClear_clicked()
     ui->lblrxCnt->setText(QString("%1").arg(rxCount));
     ui->lbltxCnt->setText(QString("%1").arg(rxCount));
 }
+
 /*----------------------------------------------------------*/
 // 多条发送功能规划
 
@@ -926,6 +944,17 @@ void SerialAssistant::on_btnAddNewGroup_clicked()
     QPushButton *multibtn = new QPushButton();
     QLineEdit   *multitxt = new QLineEdit();
     QHBoxLayout *hBoxLayout = new QHBoxLayout();
+    QSplitter   *spllitter = new QSplitter();
+
+    spllitter->addWidget( multibtn );
+    spllitter->addWidget( multitxt );
+    spllitter->setOrientation(Qt::Horizontal);
+
+    QSizePolicy sizePolicyl = multibtn->sizePolicy();
+    sizePolicyl.setHorizontalStretch(0);
+    multibtn->setSizePolicy( sizePolicyl );
+    sizePolicyl.setHorizontalStretch(10);
+    multitxt->setSizePolicy( sizePolicyl );
 
     this->initMultiBtn( multibtn, multiGroupCount+1 );
     this->renameCkb( multiCkb, multiGroupCount+1 );
@@ -937,8 +966,7 @@ void SerialAssistant::on_btnAddNewGroup_clicked()
     multiCheckBox   << multiCkb;
 
     hBoxLayout->addWidget( multiCkb );
-    hBoxLayout->addWidget( multibtn );
-    hBoxLayout->addWidget( multitxt );
+    hBoxLayout->addWidget( spllitter );
     hBoxLayout->setSpacing(6);
     hBoxLayout->setMargin(0);
 
@@ -952,16 +980,19 @@ void SerialAssistant::on_btnAddNewGroup_clicked()
 
     multiGroupCount++;
 }
+
 /**
  * @brief SerialAssistant::initMultiBtn 初始化配置按钮功能
  */
 void SerialAssistant::initMultiBtn( QPushButton *btn , quint16 count)
 {
+    connect(btn, SIGNAL(clicked(bool)), this, SLOT(slots_multiSend()));
     btn->setText( QString::number( count ) );
     btn->setObjectName( QString("btnMultiPush%1").arg( count, 2, 10, QLatin1Char('0') ) );
     btn->setContextMenuPolicy( Qt::CustomContextMenu);
     connect(btn, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(slots_showBtnRightClickMenu(const QPoint &)));
 }
+
 /**
  * @brief SerialAssistant::renameCkb
  * @param ckb
@@ -971,6 +1002,7 @@ void SerialAssistant::renameCkb( QCheckBox *ckb , quint16 count)
 {
     ckb->setObjectName( QString("chkMulti%1").arg( count, 2, 10, QLatin1Char('0') ) );
 }
+
 /**
  * @brief SerialAssistant::renameTxt
  */
@@ -978,6 +1010,7 @@ void SerialAssistant::renameTxt(QLineEdit *txt, quint16 count)
 {
     txt->setObjectName( QString("txtLine%1").arg( count, 2, 10, QLatin1Char('0') ) );
 }
+
 /**
  * @brief SerialAssistant::slots_showBtnRightClickMenu  按钮右击弹出菜单
  * @param pos
@@ -992,6 +1025,7 @@ void SerialAssistant::slots_showBtnRightClickMenu(const QPoint &pos)
     ui->actionRename->setData( ptrBtn );
     btnMenu->exec( QCursor::pos());
 }
+
 /**
 * @brief SerialAssistant::on_btnDelLastGroup_clicked 多条发送 删除一组控件
  */
@@ -1012,6 +1046,7 @@ void SerialAssistant::on_btnDelLastGroup_clicked()
     multiTxtLine.removeLast();
     multiGroupCount--;
 }
+
 /**
  * @brief ModbusTool::on_actionRename_triggered 菜单点击事件 重命名
  */
@@ -1031,6 +1066,7 @@ void SerialAssistant::on_actionRename_triggered()
     btn->setText(txtName->text());
     renameDialog->setAttribute(Qt::WA_DeleteOnClose);
 }
+
 /**
  * @brief SerialAssistant::on_btnSaveGroupData_clicked 多条发送 保存数据
  */
@@ -1119,6 +1155,7 @@ void SerialAssistant::on_btnLoadGroupData_clicked()
 }
 
 /*-----------------------------------------------------------*/
+// 保存参数配置
 /**
  * @brief SerialAssistant::closeEvent 自动保存配置
  * @param event
@@ -1197,5 +1234,3 @@ void SerialAssistant::loadDefaultConfig()
     ui->spbTxInterval->setValue( settings.value( "intervalms" ).toInt());
     settings.endGroup();
 }
-
-

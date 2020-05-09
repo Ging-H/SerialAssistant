@@ -15,7 +15,6 @@ class BaseSerialComm : public QSerialPort,public QSerialPortInfo
     Q_OBJECT
 public:
     // QSerialPort 只有115200波特率, 为避免直接修改库文件,重写波特率枚举类型
-    //
     enum BaudRate {
         Baud1200    = 1200,
         Baud2400    = 2400,
@@ -62,9 +61,7 @@ public:
     uint16_t verifyCRC16_USB(QByteArray buf);
     uint16_t verifyCRC16_CCITT_FALSE(QByteArray buf);
 
-
     static bool isHexString(QString src);
-
 
     qint32 readData   (QByteArray &rxBuffer);
     qint32 writtenData(QString txBuffer);
@@ -74,9 +71,6 @@ signals:
 
 public slots:
 
-
-
 };
 
 #endif // BASESERIALCOMM_H
-

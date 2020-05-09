@@ -1,7 +1,6 @@
 #ifndef SERIALASSISTANT_H
 #define SERIALASSISTANT_H
 
-//#include <QWidget>
 #include <QSerialPortInfo>
 #include "baseserialcomm.h"
 #include <QTimer>

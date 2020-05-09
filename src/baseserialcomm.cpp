@@ -41,7 +41,6 @@ void BaseSerialComm::listDataBit(QComboBox *cbbDataBit)
     cbbDataBit->setCurrentText("8"); // 设定默认值
 }
 
-
 /**
  * @brief BaseSerialComm::listVerify  列出校验控制选项
  * @param cbbVerify
