@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SerialComm</class>
+ <widget class="QWidget" name="SerialComm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>187</width>
+    <height>308</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>SerialComm</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>3</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QGridLayout" name="gridLayout" columnstretch="0,1">
+     <property name="verticalSpacing">
+      <number>3</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblPort">
+       <property name="text">
+        <string>Port</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="cbbPortName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblBaudrate">
+       <property name="text">
+        <string>Baudrate</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QComboBox" name="cbbBaudrate">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblDataBit">
+       <property name="text">
+        <string>DataBit</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="cbbDataBit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="lblParity">
+       <property name="text">
+        <string>Parity</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QComboBox" name="cbbParity">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="lblStopBit">
+       <property name="text">
+        <string>StopBit</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QComboBox" name="cbbStopBit">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="lblFlowCtrl">
+       <property name="text">
+        <string>FlowCtrl</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QComboBox" name="cbbFlowCtrl">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="btnReflash">
+       <property name="text">
+        <string>Reflash</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icon.qrc">
+         <normaloff>:/icon/icon/refresh.png</normaloff>:/icon/icon/refresh.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="btnOpen">
+       <property name="text">
+        <string>Open</string>
+       </property>
+       <property name="icon">
+        <iconset resource="icon.qrc">
+         <normaloff>:/icon/icon/com_disconnect.png</normaloff>
+         <normalon>:/icon/icon/com_connect_1.png</normalon>:/icon/icon/com_disconnect.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>22</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="ckbDTR">
+       <property name="text">
+        <string>DTR</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QCheckBox" name="ckbRTS">
+       <property name="text">
+        <string>RTS</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="lblAddr">
+       <property name="text">
+        <string>SlaverAddr</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSpinBox" name="spbAddr">
+       <property name="showGroupSeparator" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="maximum">
+        <number>255</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="lblTimeout">
+       <property name="text">
+        <string>Timeout</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spbTimeout">
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::PlusMinus</enum>
+       </property>
+       <property name="suffix">
+        <string> ms</string>
+       </property>
+       <property name="maximum">
+        <number>10000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="lblRep">
+       <property name="text">
+        <string>Repeat</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QSpinBox" name="spbRep">
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::PlusMinus</enum>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QCheckBox" name="ckbCBR">
+       <property name="text">
+        <string>Custom Baudrate</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spbCBR">
+       <property name="buttonSymbols">
+        <enum>QAbstractSpinBox::NoButtons</enum>
+       </property>
+       <property name="maximum">
+        <number>999999999</number>
+       </property>
+       <property name="value">
+        <number>115200</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="icon.qrc"/>
+ </resources>
+ <connections/>
+</ui>
