@@ -1,11 +1,17 @@
 # 开发环境
 
-运行环境: windows
-开发语言: C++
-设备类型: 桌面(windows)
-编译器: Microsoft Visual C++ Compiler 14.0(x86)
-Qt 版本: Qt 5.9.0 MSVC2015 32bit
-IDE版本: QtCreator 4.3.0(community)
+运行环境: windows 
+
+开发语言: C++ 
+
+设备类型: 桌面(windows) 
+
+编译器: Microsoft Visual C++ Compiler 14.0(x86) 
+
+Qt 版本: Qt 5.9.0 MSVC2015 32bit 
+
+IDE版本: QtCreator 4.3.0(community) 
+
 
 ***
 
