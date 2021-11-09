@@ -1,4 +1,4 @@
-#ifndef BASESERIALCOMM_H
+﻿#ifndef BASESERIALCOMM_H
 #define BASESERIALCOMM_H
 
 #include <QComboBox>
@@ -28,7 +28,7 @@ public:
         Baud256000  = 256000,
         Baud921600  = 921600,
         Baud1000000 = 1000000,
-        UnknownBaud = -1
+//        UnknownBaud = -1
     };
     Q_ENUM(BaudRate)
 
