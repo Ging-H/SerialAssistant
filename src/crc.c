@@ -1,4 +1,4 @@
-#include "crc.h"
+﻿#include "crc.h"
 
 /******************************************************************************
  * Name:    CRC-4/ITU           x4+x+1
@@ -32,7 +32,7 @@ void crc4_itu_GenerateTable()
 {
     uint8_t crc = 0;
     for(uint16_t i=0; i<256; i++){
-        crc = i;               // Initial value
+        crc = (uint8_t)i;               // Initial value
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0x0C;        // 0x0C = (reverse 0x03)>>(8-4)
@@ -118,7 +118,7 @@ void crc5_epu_GenerateTable()
 {
     uint8_t crc = 0;
     for(uint16_t i=0; i<256; i++){
-        crc = i;    // Initial value
+        crc = (uint8_t)i;    // Initial value
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x80)
                 crc = (crc << 1) ^ 0x48;        // 0x0C = (reverse 0x03)>>(8-4)
@@ -202,7 +202,7 @@ void crc5_itu_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0x15;        // 0x0C = (reverse 0x03)>>(8-4)
@@ -287,7 +287,7 @@ void crc5_usb_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0x14;// 0x14 = (reverse 0x05)>>(8-5)
@@ -373,7 +373,7 @@ void crc6_itu_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0x30;// 0x30 = (reverse 0x03)>>(8-6)
@@ -457,7 +457,7 @@ void crc7_mmc_GenerateTable()
 {
     uint8_t crc = 0;
     for(uint16_t i=0; i<256; i++){
-        crc = i;               // Initial value
+        crc = (uint8_t)i;               // Initial value
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x80)
                 crc = (crc << 1) ^ 0x12;        // 0x12 = 0x09<<(8-7)
@@ -547,7 +547,7 @@ void crc8_GenerateTable()
 {
     uint8_t crc = 0;        // Initial value
     for(uint16_t i =0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for(uint16_t j=0; j<8; j++ ){
             if( crc & 0x80 ){
                 crc = (crc << 1) ^ 0x07;
@@ -667,7 +667,7 @@ void crc8_rohc_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0xE0;        // 0xE0 = reverse 0x07
@@ -751,7 +751,7 @@ void crc8_maxim_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0x8C;        // 0x8C = reverse 0x31
@@ -837,7 +837,7 @@ void crc8_cdma2000_GenerateTable()
 {
     uint8_t crc = 0;        // Initial value
     for(uint16_t i =0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for(uint16_t j=0; j<8; j++ ){
             if( crc & 0x80 ){
                 crc = (crc << 1) ^ 0x9B;
@@ -899,7 +899,7 @@ void crc8_darc_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0x9C;        // 0x9C = reverse 0x39
@@ -964,7 +964,7 @@ void crc8_dvb_s2_GenerateTable()
 {
     uint8_t crc = 0;        // Initial value
     for(uint16_t i =0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for(uint16_t j=0; j<8; j++ ){
             if( crc & 0x80 ){
                 crc = (crc << 1) ^ 0xD5;
@@ -1026,7 +1026,7 @@ void crc8_ebu_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0xB8;        // 0xB8 = reverse 0x1D
@@ -1090,7 +1090,7 @@ void crc8_i_code_GenerateTable()
 {
     uint8_t crc = 0;        // Initial value
     for(uint16_t i =0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for(uint16_t j=0; j<8; j++ ){
             if( crc & 0x80 ){
                 crc = (crc << 1) ^ 0x1D;
@@ -1153,7 +1153,7 @@ void crc8_wcdma_GenerateTable()
 {
     uint8_t crc = 0;         // Initial value
     for(uint16_t i=0; i<256; i++){
-        crc = i;
+        crc = (uint8_t)i;
         for (uint16_t j = 0; j < 8; ++j){
             if (crc & 0x01)
                 crc = (crc >> 1) ^ 0xD9;        // 0xD9 = reverse 0x9B

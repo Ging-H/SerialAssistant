@@ -1,4 +1,4 @@
-#include "baseserialcomm.h"
+﻿#include "baseserialcomm.h"
 
 
 BaseSerialComm::BaseSerialComm(QSerialPort *parent) : QSerialPort(parent)
@@ -17,9 +17,9 @@ void BaseSerialComm::listBaudRate(QComboBox *cbbBaud)
         tmp = QString::number(mtaEnum.value(i));
         cbbBaud->addItem(tmp, mtaEnum.value(i));
         /* 删除未知值 */
-        if(mtaEnum.value(i)== BaseSerialComm::BaudRate::UnknownBaud ){
-            cbbBaud->removeItem(i);
-        }
+//        if(mtaEnum.value(i)== BaseSerialComm::BaudRate::UnknownBaud ){
+//            cbbBaud->removeItem(i);
+//        }
     }
     cbbBaud->setCurrentText("115200"); // 设定默认值
 }
@@ -35,8 +35,8 @@ void BaseSerialComm::listDataBit(QComboBox *cbbDataBit)
         tmp = QString::number(mtaEnum.value(i));
         cbbDataBit->addItem(tmp, mtaEnum.value(i));
         /* 删除未知值 */
-        if(mtaEnum.value(i) == BaseSerialComm::DataBits::UnknownDataBits )
-            cbbDataBit->removeItem(i);
+//        if(mtaEnum.value(i) == BaseSerialComm::DataBits::UnknownDataBits )
+//            cbbDataBit->removeItem(i);
     }
     cbbDataBit->setCurrentText("8"); // 设定默认值
 }
@@ -52,8 +52,8 @@ void BaseSerialComm::listVerify(QComboBox *cbbVerify)
     for (int i = 0; i < mtaEnum.keyCount(); i++) { // 遍历每个枚举值,获得text和data,添加到item中
         cbbVerify->addItem(mtaEnum.key(i), mtaEnum.value(i));
         /* 删除未知值 */
-        if(mtaEnum.value(i) == BaseSerialComm::Parity::UnknownParity )
-            cbbVerify->removeItem(i);
+//        if(mtaEnum.value(i) == BaseSerialComm::Parity::UnknownParity )
+//            cbbVerify->removeItem(i);
     }
     cbbVerify->setCurrentText("NoParity"); // 设定默认值
 }
@@ -74,8 +74,8 @@ void BaseSerialComm::listStopBit(QComboBox *cbbStopBit)
         cbbStopBit->addItem(tmp, mtaEnum.value(i));
 
         /* 删除未知值 */
-        if(mtaEnum.value(i) == BaseSerialComm::StopBits::UnknownStopBits )
-            cbbStopBit->removeItem(i);
+//        if(mtaEnum.value(i) == BaseSerialComm::StopBits::UnknownStopBits )
+//            cbbStopBit->removeItem(i);
     }
     cbbStopBit->setCurrentText("1"); // 设定默认值
 }
