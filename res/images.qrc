@@ -5,6 +5,8 @@
         <file>action/mail_fwd.png</file>
         <file>action/refresh.png</file>
         <file>action/save.png</file>
+        <file>action/help.png</file>
+        <file>action/color_panel.png</file>
     </qresource>
     <qresource prefix="/general">
         <file>general/ing10.ico</file>
@@ -16,4 +18,5 @@
     <qresource prefix="/theme">
         <file>blackOrange.css</file>
     </qresource>
+    <qresource prefix="/ts"/>
 </RCC>
