@@ -39,7 +39,7 @@ IDE版本: QtCreator 4.3.0(community)
 
 * 如果切换编译器,要注意将之前的所有编译生成文件删掉再重新编译
 
-  
+* /exe/Reader/Reader.exe的源码连接: https://github.com/CryFeiFei/Reader
 
 
 
